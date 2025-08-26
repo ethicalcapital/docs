@@ -345,7 +345,100 @@ Track research history, open questions, and investment thesis development for se
 
 ---
 
-## 8. Update Frequency
+## 8. TICK History and Workbench Activity Format
+
+### 8A. TICK History Format
+
+#### Purpose
+Maintain complete audit trail of TICK score changes with links to supporting research, notes, and workbench activity.
+
+#### File Naming Convention
+`TICK_History.csv` or `TICK_Audit_Trail.csv`
+
+#### Required Fields
+
+| Field | Type | Description | Example | Validation Rules |
+|-------|------|-------------|---------|------------------|
+| **History_ID** | String | Unique identifier | "TH_20250115_MELI_001" | Auto-generated |
+| **Ticker** | String | Security symbol | "MELI" | Required, links to Universe |
+| **Date** | DateTime | Change timestamp | "1/15/2025 14:32:00" | MM/DD/YYYY HH:MM:SS |
+| **Previous_TICK** | Integer | Prior TICK score | 30 | -100 to 100 |
+| **New_TICK** | Integer | Updated TICK score | 36 | -100 to 100 |
+| **Change_Delta** | Integer | Score change | +6 | Calculated |
+| **Change_Type** | String | Type of change | "Manual", "Rebalance", "Event" | From defined list |
+| **Change_Reason** | String | Brief reason | "Q4 earnings beat, margin expansion" | Required |
+| **Research_Note_IDs** | String | Linked research notes | "RN_20250115_001,RN_20250114_003" | Comma-separated IDs |
+| **Workbench_Session_ID** | String | Workbench session | "WB_20250115_143000" | Links to activity log |
+| **Chart_Config_Used** | String | Chart configurations | "Valuation_Trends,Peer_Comp" | Chart templates used |
+| **Data_Sources** | String | Data reviewed | "Sharadar_Fundamentals,Price_Data" | Data accessed |
+| **Author** | String | Who made change | "SO" | Required |
+| **Approved_By** | String | Approval if needed | "SO" | For significant changes |
+| **Portfolio_Impact** | String | Effect on portfolios | "Added to Growth" | Optional |
+
+#### Change Types
+- **Manual**: Direct manual adjustment
+- **Rebalance**: Monthly rebalancing review
+- **Event**: Triggered by corporate event
+- **Research**: Result of research findings
+- **Model**: Model-driven update
+- **Exclusion**: Related to exclusion decision
+
+### 8B. Workbench Activity Log
+
+#### Purpose
+Track all workbench interactions for reproducibility and audit.
+
+#### File Naming Convention
+`Workbench_Activity_Log.csv` or `WB_Activity_[YYYY-MM].csv`
+
+#### Required Fields
+
+| Field | Type | Description | Example | Validation Rules |
+|-------|------|-------------|---------|------------------|
+| **Session_ID** | String | Unique session ID | "WB_20250115_143000" | Auto-generated |
+| **Ticker** | String | Security analyzed | "MELI" | Required |
+| **Timestamp** | DateTime | Activity time | "1/15/2025 14:30:00" | MM/DD/YYYY HH:MM:SS |
+| **Action_Type** | String | Type of action | "Chart_View", "Data_Query" | From defined list |
+| **Action_Details** | JSON | Specific action | {"chart":"valuation","period":"5Y"} | JSON format |
+| **Chart_Config** | JSON | Chart configuration | {"type":"candlestick","overlays":["tick"]} | Full config |
+| **Data_Accessed** | String | Data tables used | "prices,fundamentals,peers" | Comma-separated |
+| **Query_Parameters** | JSON | Query details | {"tickers":["MELI","AMZN"],"metric":"PE"} | Query specifics |
+| **Result_Summary** | String | Key findings | "PE below peer average" | Optional |
+| **TICK_Changed** | Boolean | Did TICK change? | True | Yes/No |
+| **New_TICK** | Integer | New score if changed | 36 | -100 to 100 |
+| **Notes_Created** | String | Research notes added | "RN_20250115_001" | Note IDs |
+| **Duration_Seconds** | Integer | Session duration | 1800 | In seconds |
+| **User** | String | User ID | "SO" | Required |
+
+#### Action Types
+- **Chart_View**: Viewing a chart
+- **Data_Query**: Running data query
+- **Comparison**: Peer comparison
+- **Config_Save**: Saving chart config
+- **TICK_Update**: Updating TICK score
+- **Note_Add**: Adding research note
+- **Export**: Exporting data
+
+### 8C. Linkage Structure
+
+#### Cross-References
+```
+TICK_History.History_ID <-> Workbench_Activity.Session_ID
+TICK_History.Research_Note_IDs <-> Research_Notes.Note_ID
+TICK_History.Ticker <-> Universe.Ticker
+Workbench_Activity.Notes_Created <-> Research_Notes.Note_ID
+```
+
+#### Data Flow
+1. Workbench session starts → Session_ID created
+2. Charts viewed, data analyzed → Activity logged
+3. Decision made → TICK updated
+4. TICK change → History record created with Session_ID
+5. Research notes → Linked via Note_IDs
+
+---
+
+## 9. Update Frequency
 
 | Data Type | Update Frequency | Timing |
 |-----------|------------------|--------|
@@ -377,7 +470,7 @@ Track research history, open questions, and investment thesis development for se
 
 ---
 
-## 10. Integration with Exclusion Data
+## 11. Integration with Exclusion Data
 
 Securities in the Universe file should cross-reference with exclusion data:
 - If Company appears in exclusion_data with Decision="Exclude", then Excluded="Yes"
@@ -386,7 +479,7 @@ Securities in the Universe file should cross-reference with exclusion data:
 
 ---
 
-## 11. Revision History
+## 12. Revision History
 
 | Date | Version | Changes | Author |
 |------|---------|---------|--------|
