@@ -132,68 +132,73 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 
 ---
 
-## 4. Strategy History Format
+## 4. Portfolio Weights History Format
 
 ### Purpose
-Track historical portfolio composition, weightings, and performance metrics across all strategies over time.
-
-### Important Timing Distinction
-- **Position/Weight columns**: Set at rebalance date (new moon) - these are forward-looking allocations
-- **Performance columns**: Measured at month-end - these are backward-looking returns
-- Example: January column might show:
-  - Positions set on 1/1/2025 (new moon rebalance)
-  - Returns measured on 1/31/2025 (month-end performance)
+Track historical portfolio composition and weightings at each rebalance date (new moon).
 
 ### File Naming Convention
-`Port [Version] - [Strategy] History.csv` (e.g., "Port 5.0 - Growth History.csv")
+`Port [Version] - [Strategy] Weights History.csv` (e.g., "Port 5.0 - Growth Weights History.csv")
 
 ### Required Fields
 
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
-| **Type** | String | Data type | "Security", "Vertical", "Performance" | From defined list |
-| **Name** | String | Security ticker or metric | "MELI", "Total_Return" | Required |
+| **Type** | String | Data type | "Security", "Vertical", "Sector", "Cash" | From defined list |
+| **Name** | String | Security ticker or category | "MELI", "Infrastructure" | Required |
 | **Strategy** | String | Strategy name | "Growth", "Income", "Diversification" | From defined list |
 | **TICK_Score** | Integer | Current TICK (securities only) | 36 | -100 to 100 for securities |
 | **Sector** | String | GICS sector (securities only) | "Consumer Discretionary" | For security rows |
-| **Min** | Number | Historical minimum | "5.00%" or "-15.20%" | Calculated |
-| **Max** | Number | Historical maximum | "15.00%" or "45.30%" | Calculated |
-| **Avg** | Number | Historical average | "10.25%" or "12.50%" | Calculated |
-| **Current** | Number | Most recent value | "11.08%" | Latest column value |
-| **[Date Columns]** | Number | Value on date | "11.08%" or "24.5%" | Date in M-D-YYYY format |
+| **[Date Columns]** | Percentage | Weight on rebalance date | "11.08%" | Date in M-D-YYYY format |
 
 ### Data Types
 - **Security**: Individual position weightings with TICK scores
 - **Vertical**: Growth strategy vertical allocations (Innovation, Infrastructure, Lending, Real Estate)
-- **Sector**: Sector allocations
-- **Performance**: Performance metrics (returns, volatility, sharpe ratio, etc.)
-- **Cash**: Cash position
+- **Sector**: Sector allocations by GICS classification
+- **Cash**: Cash position percentage
 
-### Performance Metrics Tracked
-- **Monthly_Return**: Month-on-month return (all other returns computed from this)
-- **Holdings_Count**: Number of positions at month-end
-- **Turnover**: Portfolio turnover rate for the month
-- **Cash_Position**: Cash percentage at month-end
-
-Note: YTD, 1Y, 3Y, cumulative returns, Sharpe ratios, drawdowns, etc. are computed from monthly returns rather than stored.
-
-### Date Column Format and Timing
-**Column Headers**: Use consistent dates (e.g., "1-31-2025", "2-28-2025") representing month-end
-
-**Data Interpretation by Row Type**:
-- **Security/Vertical/Sector rows**: Values show weights SET at the new moon rebalance (early in month)
-- **Performance rows**: Values show returns MEASURED at month-end (date in column header)
-- **Empty cells**: Indicate no rebalance occurred that month (positions unchanged)
-
-**Example**: Column "1-31-2025"
-- Security weight of 11.08% = position set at January new moon, held through month
-- Monthly return of 2.50% = performance from 12/31/2024 to 1/31/2025
+### Date Column Format
+- Columns represent rebalance dates (new moon)
+- Format: M-D-YYYY (e.g., "1-9-2025", "2-8-2025")
+- Empty cells indicate no rebalance (position unchanged from previous)
+- All weights in a column sum to 100%
 
 ---
 
-## 5. Performance Analytics Formats
+## 5. Performance History Format
 
-### 5A. Portfolio Analytics Deck
+### Purpose
+Track monthly returns and portfolio metrics separately from weightings.
+
+### File Naming Convention
+`Port [Version] - [Strategy] Performance History.csv` (e.g., "Port 5.0 - Growth Performance History.csv")
+
+### Required Fields
+
+| Field | Type | Description | Example | Validation Rules |
+|-------|------|-------------|---------|------------------|
+| **Metric** | String | Performance metric type | "Monthly_Return", "Holdings_Count" | From defined list |
+| **Strategy** | String | Strategy name | "Growth", "Income", "Diversification" | From defined list |
+| **[Date Columns]** | Number | Metric value at month-end | "2.50%", "25" | Date in MM-DD-YYYY format |
+
+### Performance Metrics
+- **Monthly_Return**: Month-on-month return percentage
+- **Holdings_Count**: Number of positions at month-end
+- **Turnover**: Portfolio turnover for the month
+- **Cash_Balance**: Dollar value of cash position
+- **AUM**: Assets under management at month-end
+
+### Date Column Format
+- Columns represent month-end dates
+- Format: MM-DD-YYYY (e.g., "01-31-2025", "02-28-2025")
+- Monthly returns are from previous month-end to current month-end
+- All computed metrics (YTD, 1Y, Sharpe, etc.) derived from monthly returns
+
+---
+
+## 6. Performance Analytics Formats
+
+### 6A. Portfolio Analytics Deck
 
 #### Purpose
 Comprehensive security-level performance metrics and analytics for portfolio positions.
@@ -253,7 +258,7 @@ Universe (Master) → TICK Scoring → Portfolio Inclusion → Performance Track
 - -1 to -49: Negative factors present
 - -50 to -100: Significant concerns (may trigger exclusion review)
 
-### 5B. Website Performance Data
+### 6B. Website Performance Data
 
 #### Purpose
 Strategy-level performance data for website display and client reporting.
@@ -297,7 +302,7 @@ Strategy-level performance data for website display and client reporting.
 
 ---
 
-## 6. Research Notes and Questions Format
+## 7. Research Notes and Questions Format
 
 ### Purpose
 Track research history, open questions, and investment thesis development for securities in the universe.
@@ -340,7 +345,7 @@ Track research history, open questions, and investment thesis development for se
 
 ---
 
-## 7. Update Frequency
+## 8. Update Frequency
 
 | Data Type | Update Frequency | Timing |
 |-----------|------------------|--------|
@@ -352,7 +357,7 @@ Track research history, open questions, and investment thesis development for se
 
 ---
 
-## 8. Data Quality Rules
+## 9. Data Quality Rules
 
 ### Mandatory Fields
 - All securities must have: Ticker OR ISIN, Security_Name, TICK_Score, Excluded status
@@ -372,7 +377,7 @@ Track research history, open questions, and investment thesis development for se
 
 ---
 
-## 9. Integration with Exclusion Data
+## 10. Integration with Exclusion Data
 
 Securities in the Universe file should cross-reference with exclusion data:
 - If Company appears in exclusion_data with Decision="Exclude", then Excluded="Yes"
@@ -381,7 +386,7 @@ Securities in the Universe file should cross-reference with exclusion data:
 
 ---
 
-## 10. Revision History
+## 11. Revision History
 
 | Date | Version | Changes | Author |
 |------|---------|---------|--------|
