@@ -25,7 +25,7 @@ Master database containing all securities under consideration, their exclusion s
 | **Workflow** | String | Current workflow status | "Under Review", "" | Optional |
 | **Ticker** | String | Trading symbol | "MELI" | Required for equities |
 | **ISIN** | String | International Securities ID | "US58733R1023" | 12-character format when provided |
-| **TICK_Score** | Integer | Proprietary rating (0-60) | 36 | Range: 0-60 |
+| **TICK_Score** | Integer | Proprietary rating (0-100) | 36 | Range: 0-100, minimum 10 for portfolio inclusion |
 | **Security_Name** | String | Full company/fund name | "MercadoLibre" | Required |
 | **Note** | String | Investment thesis/concerns | "Latin America's e-commerce marketplace" | Free text |
 | **Last_TICK_Date** | Date | Date of last TICK review | "6/26/2025" | MM/DD/YYYY format |
@@ -57,11 +57,13 @@ Master database containing all securities under consideration, their exclusion s
 - Consumer Defensive
 - Funds
 
-### Verticals (Investment Themes)
+### Verticals (Investment Themes - Growth Strategy Only)
 - Innovation
 - Infrastructure
 - Lending
 - Real Estate
+
+Note: Verticals apply only to the Growth strategy. Income and Diversification strategies use different classification systems.
 
 ---
 
@@ -77,7 +79,7 @@ Track current Growth strategy portfolio composition, rebalancing targets, and al
 
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
-| **TICK** | Integer | Current TICK score | 36 | Range: 0-60 |
+| **TICK** | Integer | Current TICK score | 36 | Range: 0-100, minimum 10 for inclusion |
 | **Symbol** | String | Trading symbol | "MELI" | Required |
 | **Name** | String | Security name | "MercadoLibre" | Required |
 | **New** | Percentage | Target allocation | "11.08%" | 0-100% |
@@ -119,7 +121,7 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
 | **Ticker** | String | Trading symbol | "MELI" | Required |
-| **TICK** | Integer | Current TICK score | 36 | Range: 0-60 |
+| **TICK** | Integer | Current TICK score | 36 | Range: 0-100, minimum 10 for inclusion |
 | **Name** | String | Security name | "MercadoLibre" | Required |
 | **Old** | Percentage | Previous weight | "11.79%" | 0-100% |
 | **Change** | Percentage | Weight change | "-0.71%" | Calculated |
@@ -130,22 +132,31 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 
 ---
 
-## 4. Vertical History Format
+## 4. Strategy History Format
 
 ### Purpose
-Track historical allocation across investment verticals over time (monthly on new moon).
+Track historical portfolio composition and weightings across all strategies over time (monthly on new moon).
 
 ### File Naming Convention
-`Port [Version] - Growth Vertical History.csv` (e.g., "Port 5.0 - Growth Vertical History.csv")
+`Port [Version] - [Strategy] History.csv` (e.g., "Port 5.0 - Growth History.csv")
 
 ### Required Fields
 
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
-| **Vertical** | String | Investment vertical | "Infrastructure" | From defined list |
-| **Min** | Percentage | Historical minimum | "18.19%" | Calculated |
-| **Max** | Percentage | Historical maximum | "29.10%" | Calculated |
-| **[Date Columns]** | Percentage | Allocation on date | "21.54%" | Date in M-D-YYYY format |
+| **Type** | String | Data type | "Security", "Vertical", "Sector" | From defined list |
+| **Name** | String | Security ticker or category | "MELI", "Infrastructure" | Required |
+| **Strategy** | String | Strategy name | "Growth", "Income", "Diversification" | From defined list |
+| **Min** | Percentage | Historical minimum | "5.00%" | Calculated |
+| **Max** | Percentage | Historical maximum | "15.00%" | Calculated |
+| **Avg** | Percentage | Historical average | "10.25%" | Calculated |
+| **[Date Columns]** | Percentage | Weight on date | "11.08%" | Date in M-D-YYYY format |
+
+### Data Types
+- **Security**: Individual position weightings
+- **Vertical**: Growth strategy vertical allocations (Innovation, Infrastructure, Lending, Real Estate)
+- **Sector**: Sector allocations
+- **Cash**: Cash position
 
 ### Date Column Format
 - Columns represent monthly rebalancing dates
@@ -154,12 +165,14 @@ Track historical allocation across investment verticals over time (monthly on ne
 
 ---
 
-## 5. Performance Deck Format
+## 5. Performance Analytics Formats
 
-### Purpose
-Comprehensive performance metrics and analytics for portfolio positions.
+### 5A. Portfolio Analytics Deck
 
-### File Naming Convention
+#### Purpose
+Comprehensive security-level performance metrics and analytics for portfolio positions.
+
+#### File Naming Convention
 `Deck - Sheet1.csv` or `Port [Version] - Deck.csv`
 
 ### Required Fields
@@ -204,12 +217,98 @@ Universe (Master) → TICK Scoring → Portfolio Inclusion → Performance Track
 4. **Excluded** status prevents portfolio inclusion regardless of TICK score
 
 ### TICK Score Ranges
-- 50-60: Exceptional (highest conviction)
+- 60-100: Exceptional (highest conviction)
+- 50-59: Excellent
 - 40-49: Strong
 - 30-39: Good
 - 20-29: Acceptable
-- 10-19: Marginal
-- 0-9: Avoid
+- 10-19: Marginal (minimum for portfolio inclusion)
+- 0-9: Avoid (below portfolio threshold)
+
+### 5B. Website Performance Data
+
+#### Purpose
+Strategy-level performance data for website display and client reporting.
+
+#### File Naming Convention
+`Website_Performance.csv` or `Strategy_Performance.csv`
+
+#### Required Fields
+
+| Field | Type | Description | Example | Validation Rules |
+|-------|------|-------------|---------|------------------|
+| **Date** | Date | Data date | "1/27/2025" | MM/DD/YYYY format |
+| **Strategy** | String | Strategy name | "Growth" | Growth, Income, or Diversification |
+| **YTD_Return** | Percentage | Year-to-date return | "19.29%" | As percentage |
+| **1Y_Return** | Percentage | One year return | "24.02%" | As percentage |
+| **3Y_Return** | Percentage | Three year annualized | "16.15%" | As percentage or "N/A" |
+| **5Y_Return** | Percentage | Five year annualized | "N/A" | As percentage or "N/A" |
+| **Since_Inception** | Percentage | Since inception annualized | "4.67%" | As percentage |
+| **YTD_vs_Benchmark** | Percentage | YTD relative performance | "8.95%" | Positive/negative percentage |
+| **1Y_vs_Benchmark** | Percentage | 1Y relative performance | "5.90%" | Positive/negative percentage |
+| **3Y_vs_Benchmark** | Percentage | 3Y relative performance | "-24.23%" | Positive/negative percentage |
+| **5Y_vs_Benchmark** | Percentage | 5Y relative performance | "N/A" | Positive/negative or "N/A" |
+| **SI_vs_Benchmark** | Percentage | SI relative performance | "-21.05%" | Positive/negative percentage |
+| **Holdings_Count** | Integer | Number of positions | 25 | Positive integer |
+| **Cash_Percent** | Percentage | Cash allocation | "0.93%" | 0-100% |
+| **Top_Holding** | String | Largest position ticker | "MELI" | Valid ticker |
+| **Top_Weight** | Percentage | Largest position weight | "11.08%" | 0-100% |
+| **Benchmark** | String | Benchmark index | "ACWI" | Standard benchmark |
+| **Inception_Date** | Date | Strategy inception | "10/1/2021" | MM/DD/YYYY format |
+| **Last_Updated** | Date | Last update date | "1/27/2025" | MM/DD/YYYY format |
+
+#### Benchmark Definitions
+- **Growth**: ACWI (All Country World Index)
+- **Income**: AGG (Aggregate Bond Index) or custom blend
+- **Diversification**: 60/40 (60% equity, 40% fixed income)
+
+#### Integration with Website
+- Data feeds strategy pages at https://ethicic-railway-production.up.railway.app/strategies/
+- Updated monthly after rebalancing
+- Historical data maintained for trend analysis
+
+---
+
+## 6. Research Notes and Questions Format
+
+### Purpose
+Track research history, open questions, and investment thesis development for securities in the universe.
+
+### File Naming Convention
+`Research_Notes.csv` or `Port [Version] - Research.csv`
+
+### Required Fields
+
+| Field | Type | Description | Example | Validation Rules |
+|-------|------|-------------|---------|------------------|
+| **Ticker** | String | Trading symbol | "MELI" | Required, links to Universe |
+| **Date** | Date | Entry date | "1/15/2025" | MM/DD/YYYY format |
+| **Type** | String | Note type | "Question", "Research", "Thesis", "Risk", "Update" | From defined list |
+| **Priority** | String | Priority level | "High", "Medium", "Low" | From defined list |
+| **Status** | String | Current status | "Open", "In Progress", "Resolved", "Archived" | Required |
+| **Subject** | String | Brief subject | "ESG controversy investigation" | Max 100 characters |
+| **Note** | String | Full note text | "Investigating reports of labor issues at supplier facilities..." | Free text |
+| **Source** | String | Information source | "NGO Report", "Earnings Call", "News" | Optional |
+| **Author** | String | Note author | "SO" | Initials or name |
+| **Resolution** | String | How resolved | "Confirmed no material issues" | Required if Status=Resolved |
+| **TICK_Impact** | Integer | Impact on TICK score | "-5", "+10", "0" | Optional, numeric |
+| **Related_Tickers** | String | Related securities | "AMZN,BABA" | Comma-separated list |
+| **Follow_Up_Date** | Date | Review date | "2/1/2025" | Optional |
+
+### Note Types
+- **Question**: Open questions requiring research
+- **Research**: Research findings and analysis
+- **Thesis**: Investment thesis updates
+- **Risk**: Risk factors and concerns
+- **Update**: Corporate updates and changes
+- **Meeting**: Meeting notes and insights
+- **Model**: Financial model assumptions
+
+### Integration with Universe
+- Links to Universe via Ticker field
+- Open high-priority questions may impact TICK scores
+- Resolution of risks can trigger TICK review
+- Historical notes inform the Note field in Universe
 
 ---
 

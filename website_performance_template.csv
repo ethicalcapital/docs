@@ -1,0 +1,4 @@
+Date,Strategy,YTD_Return,1Y_Return,3Y_Return,5Y_Return,Since_Inception,YTD_vs_Benchmark,1Y_vs_Benchmark,3Y_vs_Benchmark,5Y_vs_Benchmark,SI_vs_Benchmark,Holdings_Count,Cash_Percent,Top_Holding,Top_Weight,Benchmark,Inception_Date,Last_Updated
+1/27/2025,Growth,19.29%,24.02%,16.15%,N/A,4.67%,8.95%,5.90%,-24.23%,N/A,-21.05%,25,0.93%,MELI,11.08%,ACWI,10/1/2021,1/27/2025
+1/27/2025,Income,8.50%,12.30%,10.80%,N/A,8.20%,2.10%,1.50%,1.20%,N/A,2.50%,15,5.00%,VFIAX,50.00%,AGG,10/1/2021,1/27/2025
+1/27/2025,Diversification,10.20%,15.60%,12.50%,N/A,9.80%,0.00%,0.00%,0.00%,N/A,0.00%,8,2.00%,VTIAX,35.00%,60/40,10/1/2021,1/27/2025
