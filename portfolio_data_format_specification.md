@@ -25,7 +25,7 @@ Master database containing all securities under consideration, their exclusion s
 | **Workflow** | String | Current workflow status | "Under Review", "" | Optional |
 | **Ticker** | String | Trading symbol | "MELI" | Required for equities |
 | **ISIN** | String | International Securities ID | "US58733R1023" | 12-character format when provided |
-| **TICK_Score** | Integer | Proprietary rating (0-100) | 36 | Range: 0-100, minimum 10 for portfolio inclusion |
+| **TICK_Score** | Integer | Proprietary rating (-100 to 100) | 36 | Range: -100 to 100, minimum 10 for portfolio inclusion |
 | **Security_Name** | String | Full company/fund name | "MercadoLibre" | Required |
 | **Note** | String | Investment thesis/concerns | "Latin America's e-commerce marketplace" | Free text |
 | **Last_TICK_Date** | Date | Date of last TICK review | "6/26/2025" | MM/DD/YYYY format |
@@ -79,7 +79,7 @@ Track current Growth strategy portfolio composition, rebalancing targets, and al
 
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
-| **TICK** | Integer | Current TICK score | 36 | Range: 0-100, minimum 10 for inclusion |
+| **TICK** | Integer | Current TICK score | 36 | Range: -100 to 100, minimum 10 for inclusion |
 | **Symbol** | String | Trading symbol | "MELI" | Required |
 | **Name** | String | Security name | "MercadoLibre" | Required |
 | **New** | Percentage | Target allocation | "11.08%" | 0-100% |
@@ -121,7 +121,7 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
 | **Ticker** | String | Trading symbol | "MELI" | Required |
-| **TICK** | Integer | Current TICK score | 36 | Range: 0-100, minimum 10 for inclusion |
+| **TICK** | Integer | Current TICK score | 36 | Range: -100 to 100, minimum 10 for inclusion |
 | **Name** | String | Security name | "MercadoLibre" | Required |
 | **Old** | Percentage | Previous weight | "11.79%" | 0-100% |
 | **Change** | Percentage | Weight change | "-0.71%" | Calculated |
@@ -135,7 +135,7 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 ## 4. Strategy History Format
 
 ### Purpose
-Track historical portfolio composition and weightings across all strategies over time (monthly on new moon).
+Track historical portfolio composition, weightings, and performance metrics across all strategies over time (monthly on new moon).
 
 ### File Naming Convention
 `Port [Version] - [Strategy] History.csv` (e.g., "Port 5.0 - Growth History.csv")
@@ -144,24 +144,41 @@ Track historical portfolio composition and weightings across all strategies over
 
 | Field | Type | Description | Example | Validation Rules |
 |-------|------|-------------|---------|------------------|
-| **Type** | String | Data type | "Security", "Vertical", "Sector" | From defined list |
-| **Name** | String | Security ticker or category | "MELI", "Infrastructure" | Required |
+| **Type** | String | Data type | "Security", "Vertical", "Performance" | From defined list |
+| **Name** | String | Security ticker or metric | "MELI", "Total_Return" | Required |
 | **Strategy** | String | Strategy name | "Growth", "Income", "Diversification" | From defined list |
-| **Min** | Percentage | Historical minimum | "5.00%" | Calculated |
-| **Max** | Percentage | Historical maximum | "15.00%" | Calculated |
-| **Avg** | Percentage | Historical average | "10.25%" | Calculated |
-| **[Date Columns]** | Percentage | Weight on date | "11.08%" | Date in M-D-YYYY format |
+| **TICK_Score** | Integer | Current TICK (securities only) | 36 | -100 to 100 for securities |
+| **Sector** | String | GICS sector (securities only) | "Consumer Discretionary" | For security rows |
+| **Min** | Number | Historical minimum | "5.00%" or "-15.20%" | Calculated |
+| **Max** | Number | Historical maximum | "15.00%" or "45.30%" | Calculated |
+| **Avg** | Number | Historical average | "10.25%" or "12.50%" | Calculated |
+| **Current** | Number | Most recent value | "11.08%" | Latest column value |
+| **[Date Columns]** | Number | Value on date | "11.08%" or "24.5%" | Date in M-D-YYYY format |
 
 ### Data Types
-- **Security**: Individual position weightings
+- **Security**: Individual position weightings with TICK scores
 - **Vertical**: Growth strategy vertical allocations (Innovation, Infrastructure, Lending, Real Estate)
 - **Sector**: Sector allocations
+- **Performance**: Performance metrics (returns, volatility, sharpe ratio, etc.)
 - **Cash**: Cash position
+
+### Performance Metrics Tracked
+- **Total_Return**: Cumulative total return
+- **YTD_Return**: Year-to-date return
+- **1Y_Return**: Rolling one-year return
+- **3Y_Return**: Rolling three-year annualized return
+- **Volatility**: Rolling volatility
+- **Sharpe_Ratio**: Risk-adjusted return metric
+- **Max_Drawdown**: Maximum peak-to-trough decline
+- **Holdings_Count**: Number of positions
+- **Turnover**: Portfolio turnover rate
+- **Active_Share**: Deviation from benchmark
 
 ### Date Column Format
 - Columns represent monthly rebalancing dates
 - Format: M-D-YYYY (e.g., "9-2-2021")
 - Aligned with new moon trading schedule
+- Performance metrics calculated as of each date
 
 ---
 
@@ -223,7 +240,9 @@ Universe (Master) → TICK Scoring → Portfolio Inclusion → Performance Track
 - 30-39: Good
 - 20-29: Acceptable
 - 10-19: Marginal (minimum for portfolio inclusion)
-- 0-9: Avoid (below portfolio threshold)
+- 0-9: Below threshold (not eligible for portfolio)
+- -1 to -49: Negative factors present
+- -50 to -100: Significant concerns (may trigger exclusion review)
 
 ### 5B. Website Performance Data
 
