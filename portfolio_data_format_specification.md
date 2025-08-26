@@ -135,7 +135,14 @@ Summary statistics for Growth portfolio positions including weights, changes, an
 ## 4. Strategy History Format
 
 ### Purpose
-Track historical portfolio composition, weightings, and performance metrics across all strategies over time (monthly on new moon).
+Track historical portfolio composition, weightings, and performance metrics across all strategies over time.
+
+### Important Timing Distinction
+- **Position/Weight columns**: Set at rebalance date (new moon) - these are forward-looking allocations
+- **Performance columns**: Measured at month-end - these are backward-looking returns
+- Example: January column might show:
+  - Positions set on 1/1/2025 (new moon rebalance)
+  - Returns measured on 1/31/2025 (month-end performance)
 
 ### File Naming Convention
 `Port [Version] - [Strategy] History.csv` (e.g., "Port 5.0 - Growth History.csv")
@@ -163,22 +170,24 @@ Track historical portfolio composition, weightings, and performance metrics acro
 - **Cash**: Cash position
 
 ### Performance Metrics Tracked
-- **Total_Return**: Cumulative total return
-- **YTD_Return**: Year-to-date return
-- **1Y_Return**: Rolling one-year return
-- **3Y_Return**: Rolling three-year annualized return
-- **Volatility**: Rolling volatility
-- **Sharpe_Ratio**: Risk-adjusted return metric
-- **Max_Drawdown**: Maximum peak-to-trough decline
-- **Holdings_Count**: Number of positions
-- **Turnover**: Portfolio turnover rate
-- **Active_Share**: Deviation from benchmark
+- **Monthly_Return**: Month-on-month return (all other returns computed from this)
+- **Holdings_Count**: Number of positions at month-end
+- **Turnover**: Portfolio turnover rate for the month
+- **Cash_Position**: Cash percentage at month-end
 
-### Date Column Format
-- Columns represent monthly rebalancing dates
-- Format: M-D-YYYY (e.g., "9-2-2021")
-- Aligned with new moon trading schedule
-- Performance metrics calculated as of each date
+Note: YTD, 1Y, 3Y, cumulative returns, Sharpe ratios, drawdowns, etc. are computed from monthly returns rather than stored.
+
+### Date Column Format and Timing
+**Column Headers**: Use consistent dates (e.g., "1-31-2025", "2-28-2025") representing month-end
+
+**Data Interpretation by Row Type**:
+- **Security/Vertical/Sector rows**: Values show weights SET at the new moon rebalance (early in month)
+- **Performance rows**: Values show returns MEASURED at month-end (date in column header)
+- **Empty cells**: Indicate no rebalance occurred that month (positions unchanged)
+
+**Example**: Column "1-31-2025"
+- Security weight of 11.08% = position set at January new moon, held through month
+- Monthly return of 2.50% = performance from 12/31/2024 to 1/31/2025
 
 ---
 
