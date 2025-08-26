@@ -1,0 +1,5 @@
+Excluded,Workflow,Ticker,ISIN,TICK Score,Security Name,Note,Last TICK Date,Category,Sector,Benchmark,Fund,Growth Portfolio,Income Portfolio,Diversification Portfolio,TICK History,Updated By,Last Updated,Has Price Data,Has Fundamental Data,Data Status
+No,,EXAMPLE1,US1234567890,45,Example Innovation Corp,Strong moat in sustainable technology. Growing market share in renewable energy storage.,1/1/2025,Technology,Information Technology,,,Yes,,,40,42,45,Database,01/01/2025 09:00,Yes,Yes,Complete
+No,,EXAMPLE2,US0987654321,38,Example Infrastructure Inc,Essential utility services in underserved markets. Transitioning to renewable sources.,1/1/2025,Utilities,Utilities,,,Yes,Yes,,35,38,Database,01/01/2025 09:00,Yes,Yes,Complete
+Yes,,EXAMPLE3,US1111111111,0,Example Fossil Corp,Upstream oil and gas extraction. Excluded per screening policy.,1/1/2025,Energy,Energy,,,,,,,Database,01/01/2025 09:00,Yes,Yes,Complete
+No,,EXAMPLEFUND,,32,Example ESG Fund,Aligned ESG screened index fund for diversification strategy.,1/1/2025,Funds,Funds,,,,,Yes,30,32,Database,01/01/2025 09:00,Yes,No,Partial

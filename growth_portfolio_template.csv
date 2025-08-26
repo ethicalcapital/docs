@@ -1,0 +1,5 @@
+TICK,Symbol,Name,New,Old,Delta,Div Yield,Div Yield Contribution,FCF/Cap,FCF Contribution,Vertical,Country,United States,Asia,Latin America,Europe,Real Estate Current,Infrastructure Current,Innovation Current,Lending Current,Real Estate After Rebal,Infrastructure After Rebal,Innovation After Rebal,Lending After Rebal,Market Cap (USD BLN),Avg Volume,Price,Dollar Volume ($Mln),Sector
+45,EXAMPLE1,Example Innovation Corp,15.00%,14.50%,0.50%,0.00%,0.00%,8.50%,1.28%,Innovation,United States,15.00%,,,,,,14.50%,,,,15.00%,,45.5,500000,125.50,62.75,Information Technology
+38,EXAMPLE2,Example Infrastructure Inc,12.00%,11.00%,1.00%,2.50%,0.30%,5.20%,0.62%,Infrastructure,United States,12.00%,,,,,11.00%,,,12.00%,,,28.3,300000,87.25,26.18,Utilities
+32,EXAMPLE3,Example Real Estate Trust,10.00%,10.50%,-0.50%,4.00%,0.40%,3.80%,0.38%,Real Estate,United States,10.00%,,,,10.50%,,,,10.00%,,,,15.2,250000,52.30,13.08,Real Estate
+30,EXAMPLE4,Example Lending Corp,8.00%,7.50%,0.50%,3.20%,0.26%,6.00%,0.48%,Lending,United States,8.00%,,,,,,,7.50%,,,,8.00%,22.1,400000,95.40,38.16,Financials
